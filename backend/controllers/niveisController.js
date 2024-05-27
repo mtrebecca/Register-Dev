@@ -1,7 +1,6 @@
 let niveis = [
-  { id: 1, nivel: "Nível 1" },
-  { id: 2, nivel: "Nível 2" },
-  { id: 3, nivel: "Nível 3" }
+  { id: 1, nivel: "Júnior" },
+  { id: 2, nivel: "Pleno" },
 ];
 
 exports.listarNiveis = (req, res) => {

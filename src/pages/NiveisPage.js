@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import NiveisForm from "../components/Niveis/NiveisForm";
 import NiveisList from "../components/Niveis/NiveisList";
 import { fetchNiveis, addNivel, updateNivel, deleteNivel } from "../api/api";
+import Swal from "sweetalert2";
 
 function NiveisPage() {
   const [niveis, setNiveis] = useState([]);
@@ -38,13 +39,45 @@ function NiveisPage() {
       document.getElementById("nivel").value = nivel.nivel;
     }
   };
-
   const handleDeleteNivel = async (id) => {
     try {
+      const response = await fetch(
+        "http://localhost:3002/api/desenvolvedoresNiveis/niveisComQuantidade"
+      );
+      if (!response.ok) {
+        throw new Error(
+          "Erro ao buscar quantidades de desenvolvedores por nível"
+        );
+      }
+      const niveisComQuantidade = await response.json();
+
+      console.log("Níveis com Quantidade:", niveisComQuantidade);
+
+      const nivel = niveisComQuantidade.find((n) => n.id === id);
+      if (nivel && nivel.quantidadeDesenvolvedores > 0) {
+        Swal.fire({
+          icon: "error",
+          title: "Não é possível excluir",
+          text: "Não é possível excluir o nível, pois existem desenvolvedores associados a ele.",
+        });
+        return;
+      }
+
       await deleteNivel(id);
       setNiveis(niveis.filter((n) => n.id !== id));
+
+      Swal.fire({
+        icon: "success",
+        title: "Nível excluído",
+        text: "O nível foi excluído com sucesso.",
+      });
     } catch (error) {
       console.error("Erro ao remover nível:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Erro",
+        text: "Ocorreu um erro ao remover o nível.",
+      });
     }
   };
 

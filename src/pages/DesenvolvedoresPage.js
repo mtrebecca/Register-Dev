@@ -68,7 +68,7 @@ function DesenvolvedoresPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#111827] flex items-center justify-center">
+    <div className="min-h-screen bg-[#111827] flex items-center justify-center py-8">
       <div className="w-full max-w-4xl bg-[#374151] p-8 rounded-lg shadow-lg">
         <div className="mb-4 flex text-center">
           <DesenvolvedoresForm

@@ -1,6 +1,17 @@
 import React from 'react';
 
 function DesenvolvedoresForm({ onSubmit, niveis }) {
+  function calcularIdade(dataNascimento) {
+    const hoje = new Date();
+    const nascimento = new Date(dataNascimento);
+    let idade = hoje.getFullYear() - nascimento.getFullYear();
+    const mes = hoje.getMonth() - nascimento.getMonth();
+    if (mes < 0 || (mes === 0 && hoje.getDate() < nascimento.getDate())) {
+      idade--;
+    }
+    return idade;
+  }
+  
   const handleSubmit = (e) => {
     e.preventDefault();
     const nome = e.target.nome.value;
@@ -8,7 +19,13 @@ function DesenvolvedoresForm({ onSubmit, niveis }) {
     const dataNascimento = e.target.dataNascimento.value;
     const hobby = e.target.hobby.value;
     const nivelId = e.target.nivelId.value;
-    onSubmit({ nome, sexo, dataNascimento, hobby, nivelId });
+    const nivel = niveis.find((nivel) => {
+      console.log("Comparando nível ID:", nivel.id, "com", nivelId);
+      return nivel.id === parseInt(nivelId);
+    })?.nivel || "Nível não encontrado";
+    const idade = calcularIdade(dataNascimento);
+  
+    onSubmit({ nome, sexo, dataNascimento, hobby, nivelId: parseInt(nivelId), nivel, idade });
   };
 
   return (
@@ -24,8 +41,8 @@ function DesenvolvedoresForm({ onSubmit, niveis }) {
           Sexo:
         </label>
         <select id="sexo" name="sexo" required className="px-4 py-2 mb-4 rounded-md shadow-sm bg-gray-700 text-white w-64">
-          <option value="Masculino">Masculino</option>
-          <option value="Feminino">Feminino</option>
+          <option value="M">M</option>
+          <option value="F">F</option>
           <option value="Outro">Outro</option>
         </select>
         
