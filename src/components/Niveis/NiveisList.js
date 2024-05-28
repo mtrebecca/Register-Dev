@@ -6,6 +6,7 @@ function NiveisList({ niveis, onDelete }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [editedNivelId, setEditedNivelId] = useState(null);
   const [editedNivel, setEditedNivel] = useState("");
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     setNiveisList(niveis);
@@ -14,8 +15,10 @@ function NiveisList({ niveis, onDelete }) {
         const response = await axios.get(`http://localhost:3002/api/niveis?q=${searchQuery}`);
         const data = response.data;
         setNiveisList(data);
+        setError(null); 
       } catch (error) {
         console.error("Erro ao buscar níveis:", error);
+        setError("Erro ao buscar níveis. Por favor, tente novamente.");
       }
     };
 
@@ -40,8 +43,10 @@ function NiveisList({ niveis, onDelete }) {
       setNiveisList((prevNiveis) =>
         prevNiveis.map((n) => (n.id === id ? { ...n, nivel: editedNivel } : n))
       );
+      setError(null); 
     } catch (error) {
       console.error("Erro ao editar o nível:", error);
+      setError("Erro ao editar o nível. Por favor, tente novamente.");
     }
   };
 
@@ -61,6 +66,7 @@ function NiveisList({ niveis, onDelete }) {
         placeholder="Buscar nível..."
         className="px-4 py-2 mb-4 rounded-md shadow-sm bg-gray-700 text-white w-full"
       />
+      {error && <p className="text-red-500 mb-4">{error}</p>}
       <table className="w-full justify-between">
         <thead>
           <tr>

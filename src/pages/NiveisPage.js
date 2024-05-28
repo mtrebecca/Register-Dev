@@ -7,11 +7,18 @@ import Swal from "sweetalert2";
 function NiveisPage() {
   const [niveis, setNiveis] = useState([]);
   const [editNivelId, setEditNivelId] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const getNiveis = async () => {
-      const niveisData = await fetchNiveis();
-      setNiveis(niveisData);
+      try {
+        const niveisData = await fetchNiveis();
+        setNiveis(niveisData);
+        setError(null);
+      } catch (error) {
+        console.error("Erro ao buscar níveis:", error);
+        setError("Erro ao buscar níveis. Por favor, tente novamente.");
+      }
     };
 
     getNiveis();
@@ -27,8 +34,10 @@ function NiveisPage() {
         const novoNivel = await addNivel(nivel);
         setNiveis([...niveis, novoNivel]);
       }
+      setError(null);
     } catch (error) {
       console.error("Erro ao adicionar/editar nível:", error);
+      setError("Erro ao adicionar/editar nível. Por favor, tente novamente.");
     }
   };
 
@@ -71,6 +80,7 @@ function NiveisPage() {
         title: "Nível excluído",
         text: "O nível foi excluído com sucesso.",
       });
+      setError(null); 
     } catch (error) {
       console.error("Erro ao remover nível:", error);
       Swal.fire({
