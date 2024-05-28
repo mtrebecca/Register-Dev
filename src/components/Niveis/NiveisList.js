@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import Swal from "sweetalert2";
 import '../styles/Listas.css';
 
 function NiveisList({ niveis, onDelete }) {
@@ -22,8 +23,12 @@ function NiveisList({ niveis, onDelete }) {
         setNiveisList(data);
         setError(null);
       } catch (error) {
-        console.error("Erro ao buscar níveis:", error);
         setError("Erro ao buscar níveis. Por favor, tente novamente.");
+        Swal.fire({
+          icon: "error",
+          title: "Erro ao buscar níveis",
+          text: "Por favor, tente novamente.",
+        });
       }
     };
 
@@ -49,9 +54,19 @@ function NiveisList({ niveis, onDelete }) {
         prevNiveis.map((n) => (n.id === id ? { ...n, nivel: editedNivel } : n))
       );
       setError(null);
+      Swal.fire({
+        icon: "success",
+        title: "Nível editado com sucesso!",
+        showConfirmButton: false,
+        timer: 1500,
+      });
     } catch (error) {
-      console.error("Erro ao editar o nível:", error);
       setError("Erro ao editar o nível. Por favor, tente novamente.");
+      Swal.fire({
+        icon: "error",
+        title: "Erro ao editar o nível",
+        text: "Por favor, tente novamente.",
+      });
     }
   };
 

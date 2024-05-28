@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Swal from "sweetalert2";
 
 function NiveisForm({ onSubmit }) {
   const [error, setError] = useState(null);
@@ -9,9 +10,19 @@ function NiveisForm({ onSubmit }) {
       const nivel = e.target.nivel.value;
       await onSubmit(nivel);
       setError(null);
+      Swal.fire({
+        icon: "success",
+        title: "Nível salvo com sucesso!",
+        showConfirmButton: false,
+        timer: 1500,
+      });
     } catch (error) {
-      console.error("Erro ao salvar o nível:", error);
       setError("Erro ao salvar o nível. Por favor, tente novamente.");
+      Swal.fire({
+        icon: "error",
+        title: "Erro ao salvar o nível",
+        text: "Por favor, tente novamente.",
+      });
     }
   };
 

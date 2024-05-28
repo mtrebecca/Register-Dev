@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import Swal from "sweetalert2";
 import "../styles/Listas.css";
 
 function DesenvolvedoresList({ desenvolvedores, onDelete }) {
@@ -40,7 +41,11 @@ function DesenvolvedoresList({ desenvolvedores, onDelete }) {
         });
         setDevList(data);
       } catch (error) {
-        console.error("Erro ao buscar desenvolvedores:", error);
+        Swal.fire({
+          icon: "error",
+          title: 'Erro ao buscar desenvolvedores"',
+          text: "Por favor, tente novamente.",
+        });
       }
     };
     if (searchQuery.trim() !== "") {
@@ -69,8 +74,18 @@ function DesenvolvedoresList({ desenvolvedores, onDelete }) {
         )
       );
       setEditedDevId(null);
+      Swal.fire({
+        icon: "success",
+        title: "Desenvolvedor atualizado com sucesso!",
+        showConfirmButton: false,
+        timer: 1500,
+      });
     } catch (error) {
-      console.error("Erro ao editar o desenvolvedor:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Erro ao editar o desenvolvedor",
+        text: "Por favor, tente novamente.",
+      });
     }
   };
 
@@ -78,8 +93,18 @@ function DesenvolvedoresList({ desenvolvedores, onDelete }) {
     try {
       await axios.delete(`http://localhost:3002/api/desenvolvedores/${id}`);
       setDevList(devList.filter((dev) => dev.id !== id));
+      Swal.fire({
+        icon: "success",
+        title: "Desenvolvedor excluído com sucesso!",
+        showConfirmButton: false,
+        timer: 1500,
+      });
     } catch (error) {
-      console.error("Erro ao excluir o desenvolvedor:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Erro ao excluir o desenvolvedor",
+        text: "Por favor, tente novamente.",
+      });
     }
   };
 

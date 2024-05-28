@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import Swal from 'sweetalert2';
 
 function DesenvolvedoresForm({ onSubmit, niveis }) {
   const [error, setError] = useState(null);
@@ -35,10 +36,20 @@ function DesenvolvedoresForm({ onSubmit, niveis }) {
     
       await onSubmit({ nome, sexo, dataNascimento, hobby, nivelId, nivel: nivel, idade });
       setError(null);
-      
+      Swal.fire({
+        icon: 'success',
+        title: 'Desenvolvedor cadastrado com sucesso!',
+        showConfirmButton: false,
+        timer: 1500
+      });
       formRef.current.reset();
     } catch (error) {
       setError("Erro ao cadastrar desenvolvedor. Por favor, tente novamente.");
+      Swal.fire({
+        icon: 'error',
+        title: 'Erro ao cadastrar desenvolvedor',
+        text: 'Por favor, tente novamente.',
+      });
     }
   };
 
