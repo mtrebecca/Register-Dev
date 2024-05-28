@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 function DesenvolvedoresForm({ onSubmit, niveis }) {
+  const [error, setError] = useState(null);
+
   function calcularIdade(dataNascimento) {
     const hoje = new Date();
     const nascimento = new Date(dataNascimento);
@@ -12,25 +14,35 @@ function DesenvolvedoresForm({ onSubmit, niveis }) {
     return idade;
   }
   
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const nome = e.target.nome.value;
-    const sexo = e.target.sexo.value;
-    const dataNascimento = e.target.dataNascimento.value;
-    const hobby = e.target.hobby.value;
-    const nivelId = e.target.nivelId.value;
-    const nivel = niveis.find((nivel) => {
-      console.log("Comparando nível ID:", nivel.id, "com", nivelId);
-      return nivel.id === parseInt(nivelId);
-    })?.nivel || "Nível não encontrado";
-    const idade = calcularIdade(dataNascimento);
+    try {
+      const nome = e.target.nome.value;
+      const sexo = e.target.sexo.value;
+      const dataNascimento = e.target.dataNascimento.value;
+      const hobby = e.target.hobby.value;
+      const nivelId = parseInt(e.target.nivelId.value);
   
-    onSubmit({ nome, sexo, dataNascimento, hobby, nivelId: parseInt(nivelId), nivel, idade });
+      const nivel = niveis.find((nivel) => {
+        console.log("Comparando nível ID:", nivel.id, "com", nivelId);
+        return nivel.id === parseInt(nivelId);
+      })?.nivel || "Nível não encontrado";
+  
+      console.log("Dados do formulário:", { nome, sexo, dataNascimento, hobby, nivelId, nivel });
+      
+      const idade = calcularIdade(dataNascimento);
+    
+      await onSubmit({ nome, sexo, dataNascimento, hobby, nivelId, nivel: nivel, idade });
+      setError(null);
+    } catch (error) {
+      setError("Erro ao cadastrar desenvolvedor. Por favor, tente novamente.");
+    }
   };
 
   return (
     <div className="w-full md:w-3/4 lg:w-1/2 mx-auto p-4 bg-gray-600 rounded-md shadow-md">
       <h1 className="text-2xl font-sans font-bold text-white mb-4">Cadastrar Desenvolvedor</h1>
+      {error && <p className="text-red-500 mb-4">{error}</p>}
       <form onSubmit={handleSubmit} className="flex flex-col items-center">
         <label htmlFor="nome" className="text-white mb-2 w-64 text-left">
           Nome:

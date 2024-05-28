@@ -40,7 +40,9 @@ exports.niveis = niveis;
 
 exports.listarDesenvolvedores = (req, res) => {
   const desenvolvedoresComNivel = desenvolvedores.map((dev) => {
-    const nivel = niveis.find((n) => n.id === dev.nivel_id);
+    const nivel = niveis.find((n) => {
+      return n.id === dev.nivel_id;
+    });
     const desenvolvedorComDados = { 
       ...dev, 
       nivel: nivel ? nivel.nivel : "Nível não encontrado",
@@ -53,12 +55,26 @@ exports.listarDesenvolvedores = (req, res) => {
   res.json(desenvolvedoresComNivel);
 };
 
+
+exports.listarDesenvolvedoresFiltrados = (req, res) => {
+  const query = req.query.q;
+  if (query) {
+    const desenvolvedoresFiltrados = desenvolvedores.filter(dev =>
+      dev.nome.toLowerCase().includes(query.toLowerCase())
+    );
+    res.json(desenvolvedoresFiltrados);
+  } else {
+    res.json(desenvolvedores);
+  }
+};
+
 exports.cadastrarDesenvolvedor = (req, res) => {
   console.log("Dados recebidos no endpoint cadastrarDesenvolvedor:", req.body);
   const { nivelId, nome, sexo, dataNascimento, hobby, idade } = req.body;
   const id = desenvolvedores.length + 1;
+
   const nivel = niveis.find((nivel) => nivel.id === parseInt(nivelId));
-  const nomeDoNivel = nivel ? nivel.nivel : "Nível não encontrado";
+  const nomeDoNivel = nivel ? nivel.nivel : "Nível não encontrado 2";
 
   const novoDesenvolvedor = {
     id,
@@ -71,8 +87,9 @@ exports.cadastrarDesenvolvedor = (req, res) => {
     nivel: nomeDoNivel,
   };
   desenvolvedores.push(novoDesenvolvedor);
-  res.status(201).json({ ...novoDesenvolvedor, idade });
+  res.status(201).json(novoDesenvolvedor);
 };
+
 
 exports.editarDesenvolvedor = (req, res) => {
   const id = parseInt(req.params.id);

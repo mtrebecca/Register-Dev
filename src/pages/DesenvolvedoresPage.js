@@ -21,8 +21,12 @@ function DesenvolvedoresPage() {
     };
 
     const getNiveis = async () => {
-      const niveisData = await fetchNiveis();
-      setNiveis(niveisData);
+      try {
+        const niveisData = await fetchNiveis();
+        setNiveis(niveisData);
+      } catch (error) {
+        console.error("Erro ao buscar níveis:", error);
+      }
     };
 
     getDesenvolvedores();

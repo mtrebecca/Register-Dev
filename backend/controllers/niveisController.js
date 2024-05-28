@@ -4,7 +4,15 @@ let niveis = [
 ];
 
 exports.listarNiveis = (req, res) => {
-  res.json(niveis);
+  const query = req.query.q;
+  if (query) {
+    const niveisFiltrados = niveis.filter(nivel =>
+      nivel.nivel.toLowerCase().includes(query.toLowerCase())
+    );
+    res.json(niveisFiltrados);
+  } else {
+    res.json(niveis);
+  }
 };
 
 exports.cadastrarNivel = (req, res) => {

@@ -2,13 +2,29 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 function NiveisList({ niveis, onDelete }) {
+  const [niveisList, setNiveisList] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [editedNivelId, setEditedNivelId] = useState(null);
   const [editedNivel, setEditedNivel] = useState("");
-  const [niveisList, setNiveisList] = useState([]);
 
   useEffect(() => {
     setNiveisList(niveis);
-  }, [niveis]);
+    const fetchNiveis = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3002/api/niveis?q=${searchQuery}`);
+        const data = response.data;
+        setNiveisList(data);
+      } catch (error) {
+        console.error("Erro ao buscar níveis:", error);
+      }
+    };
+
+    fetchNiveis();
+  }, [niveis, searchQuery]);
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
 
   const handleEdit = (id, nivel) => {
     setEditedNivelId(id);
@@ -38,6 +54,13 @@ function NiveisList({ niveis, onDelete }) {
       <h2 className="text-2xl font-sans font-bold text-white text-center mb-4">
         Lista de Níveis
       </h2>
+      <input
+        type="text"
+        value={searchQuery}
+        onChange={handleSearchChange}
+        placeholder="Buscar nível..."
+        className="px-4 py-2 mb-4 rounded-md shadow-sm bg-gray-700 text-white w-full"
+      />
       <table className="w-full justify-between">
         <thead>
           <tr>
@@ -47,8 +70,8 @@ function NiveisList({ niveis, onDelete }) {
           </tr>
         </thead>
         <tbody className="w-full">
-          {niveisList.map((nivel) => (
-            <tr key={nivel.id} className="items-center justify-between w-full">
+          {niveisList.map((nivel, index) => (
+            <tr key={index} className="items-center justify-between w-full">
               <td className="text-white w-1/12">{nivel.id}</td>
               <td>
                 {editedNivelId === nivel.id ? (
@@ -86,6 +109,13 @@ function NiveisList({ niveis, onDelete }) {
               </td>
             </tr>
           ))}
+          {niveisList.length === 0 && (
+            <tr>
+              <td colSpan="3" className="text-white text-center">
+                Nenhum resultado encontrado.
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
     </div>
