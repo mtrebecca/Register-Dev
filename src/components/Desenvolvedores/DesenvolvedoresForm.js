@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 
 function DesenvolvedoresForm({ onSubmit, niveis }) {
   const [error, setError] = useState(null);
+  const formRef = useRef(null);
 
   function calcularIdade(dataNascimento) {
     const hoje = new Date();
@@ -34,6 +35,8 @@ function DesenvolvedoresForm({ onSubmit, niveis }) {
     
       await onSubmit({ nome, sexo, dataNascimento, hobby, nivelId, nivel: nivel, idade });
       setError(null);
+      
+      formRef.current.reset();
     } catch (error) {
       setError("Erro ao cadastrar desenvolvedor. Por favor, tente novamente.");
     }
@@ -43,7 +46,7 @@ function DesenvolvedoresForm({ onSubmit, niveis }) {
     <div className="w-full md:w-3/4 lg:w-1/2 mx-auto p-4 bg-gray-600 rounded-md shadow-md">
       <h1 className="text-2xl font-sans font-bold text-white mb-4">Cadastrar Desenvolvedor</h1>
       {error && <p className="text-red-500 mb-4">{error}</p>}
-      <form onSubmit={handleSubmit} className="flex flex-col items-center">
+      <form ref={formRef} onSubmit={handleSubmit} className="flex flex-col items-center">
         <label htmlFor="nome" className="text-white mb-2 w-64 text-left">
           Nome:
         </label>

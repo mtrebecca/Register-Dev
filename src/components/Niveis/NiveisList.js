@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import '../styles/Listas.css';
 
 function NiveisList({ niveis, onDelete }) {
   const [niveisList, setNiveisList] = useState([]);
@@ -7,15 +8,19 @@ function NiveisList({ niveis, onDelete }) {
   const [editedNivelId, setEditedNivelId] = useState(null);
   const [editedNivel, setEditedNivel] = useState("");
   const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
 
   useEffect(() => {
     setNiveisList(niveis);
     const fetchNiveis = async () => {
       try {
-        const response = await axios.get(`http://localhost:3002/api/niveis?q=${searchQuery}`);
+        const response = await axios.get(
+          `http://localhost:3002/api/niveis?q=${searchQuery}`
+        );
         const data = response.data;
         setNiveisList(data);
-        setError(null); 
+        setError(null);
       } catch (error) {
         console.error("Erro ao buscar níveis:", error);
         setError("Erro ao buscar níveis. Por favor, tente novamente.");
@@ -43,7 +48,7 @@ function NiveisList({ niveis, onDelete }) {
       setNiveisList((prevNiveis) =>
         prevNiveis.map((n) => (n.id === id ? { ...n, nivel: editedNivel } : n))
       );
-      setError(null); 
+      setError(null);
     } catch (error) {
       console.error("Erro ao editar o nível:", error);
       setError("Erro ao editar o nível. Por favor, tente novamente.");
@@ -53,6 +58,12 @@ function NiveisList({ niveis, onDelete }) {
   const handleChange = (e) => {
     setEditedNivel(e.target.value);
   };
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = niveisList.slice(indexOfFirstItem, indexOfLastItem);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
     <div className="w-full md:w-3/4 lg:w-1/2 mx-auto p-4 bg-gray-600 rounded-md shadow-md">
@@ -76,7 +87,7 @@ function NiveisList({ niveis, onDelete }) {
           </tr>
         </thead>
         <tbody className="w-full">
-          {niveisList.map((nivel, index) => (
+          {currentItems.map((nivel, index) => (
             <tr key={index} className="items-center justify-between w-full">
               <td className="text-white w-1/12">{nivel.id}</td>
               <td>
@@ -115,7 +126,7 @@ function NiveisList({ niveis, onDelete }) {
               </td>
             </tr>
           ))}
-          {niveisList.length === 0 && (
+          {currentItems.length === 0 && (
             <tr>
               <td colSpan="3" className="text-white text-center">
                 Nenhum resultado encontrado.
@@ -124,6 +135,25 @@ function NiveisList({ niveis, onDelete }) {
           )}
         </tbody>
       </table>
+      <div className="flex justify-center w-full">
+        {niveisList.length > itemsPerPage && (
+          <nav className="flex w-full justify-center">
+            <ul className="pagination flex">
+              {[...Array(Math.ceil(niveisList.length / itemsPerPage))].map(
+                (_, index) => (
+                  <li key={index} className="page-item">
+                    <button
+                      onClick={() => paginate(index + 1)}
+                      className="page-link text-white">
+                      {index + 1}
+                    </button>
+                  </li>
+                )
+              )}
+            </ul>
+          </nav>
+        )}
+      </div>
     </div>
   );
 }

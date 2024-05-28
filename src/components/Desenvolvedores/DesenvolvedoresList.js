@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import "../styles/Listas.css";
 
 function DesenvolvedoresList({ desenvolvedores, onDelete }) {
   const [editedDevId, setEditedDevId] = useState(null);
   const [editedDev, setEditedDev] = useState({ nome: "", hobby: "" });
   const [devList, setDevList] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   useEffect(() => {
     setDevList(desenvolvedores);
@@ -88,6 +91,12 @@ function DesenvolvedoresList({ desenvolvedores, onDelete }) {
     }));
   };
 
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentDevList = devList.slice(indexOfFirstItem, indexOfLastItem);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
   return (
     <div className="w-full mx-auto p-4 bg-gray-600 rounded-md shadow-md">
       <h2 className="text-2xl font-sans font-bold text-white text-center mb-4">
@@ -103,83 +112,106 @@ function DesenvolvedoresList({ desenvolvedores, onDelete }) {
       {devList.length === 0 ? (
         <p className="text-white text-center">Nenhum resultado encontrado.</p>
       ) : (
-        <table className="w-full justify-between">
-          <thead>
-            <tr>
-              <th className="text-left text-white w-1/12">ID</th>
-              <th className="text-left text-white w-2/12">Nome</th>
-              <th className="text-left text-white w-1/12">Sexo</th>
-              <th className="text-left text-white w-2/12">
-                Data de Nascimento
-              </th>
-              <th className="text-left text-white w-1/12">Idade</th>
-              <th className="text-left text-white w-2/12">Hobby</th>
-              <th className="text-left text-white w-2/12">Nível</th>
-              <th className="text-left text-white w-1/12">Ações</th>
-            </tr>
-          </thead>
-          <tbody className="w-full">
-            {devList.map((dev) => (
-              <tr key={dev.id} className="items-center justify-between w-full">
-                <td className="text-white w-1/12">{dev.id}</td>
-                <td className="w-2/12">
-                  {editedDevId === dev.id ? (
-                    <input
-                      type="text"
-                      name="nome"
-                      value={editedDev.nome}
-                      onChange={handleChange}
-                      className="px-4 py-2 mb-4 rounded-md shadow-sm bg-gray-700 text-white w-full"
-                    />
-                  ) : (
-                    <span className="text-white">{dev.nome}</span>
-                  )}
-                </td>
-                <td className="text-white w-1/12">{dev.sexo}</td>
-                <td className="text-white w-2/12">
-                  {new Date(dev.data_nascimento).toLocaleDateString()}
-                </td>
-                <td className="text-white w-1/12">{dev.idade}</td>{" "}
-                <td className="w-2/12">
-                  {editedDevId === dev.id ? (
-                    <input
-                      type="text"
-                      name="hobby"
-                      value={editedDev.hobby}
-                      onChange={handleChange}
-                      className="px-4 py-2 mb-4 rounded-md shadow-sm bg-gray-700 text-white w-full"
-                    />
-                  ) : (
-                    <span className="text-white">{dev.hobby}</span>
-                  )}
-                </td>
-                <td className="text-white w-2/12">{dev.nivel}</td>
-                <td className="w-1/12">
-                  {editedDevId === dev.id ? (
-                    <button
-                      onClick={handleSave}
-                      className="bg-violet-400 hover:bg-violet-500 text-white px-4 py-2 rounded-md mr-2">
-                      Salvar
-                    </button>
-                  ) : (
-                    <div className="flex">
-                      <button
-                        onClick={() => handleEdit(dev)}
-                        className="bg-violet-400 hover:bg-violet-500 text-white px-4 py-2 rounded-md mr-2">
-                        Editar
-                      </button>
-                      <button
-                        onClick={() => handleDelete(dev.id)}
-                        className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md">
-                        Excluir
-                      </button>
-                    </div>
-                  )}
-                </td>
+        <>
+          <table className="w-full justify-between">
+            <thead>
+              <tr>
+                <th className="text-left text-white w-1/12">ID</th>
+                <th className="text-left text-white w-2/12">Nome</th>
+                <th className="text-left text-white w-1/12">Sexo</th>
+                <th className="text-left text-white w-2/12">
+                  Data de Nascimento
+                </th>
+                <th className="text-left text-white w-1/12">Idade</th>
+                <th className="text-left text-white w-2/12">Hobby</th>
+                <th className="text-left text-white w-2/12">Nível</th>
+                <th className="text-left text-white w-1/12">Ações</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="w-full">
+              {currentDevList.map((dev) => (
+                <tr
+                  key={dev.id}
+                  className="items-center justify-between w-full">
+                  <td className="text-white w-1/12">{dev.id}</td>
+                  <td className="w-2/12">
+                    {editedDevId === dev.id ? (
+                      <input
+                        type="text"
+                        name="nome"
+                        value={editedDev.nome}
+                        onChange={handleChange}
+                        className="px-4 py-2 mb-4 rounded-md shadow-sm bg-gray-700 text-white w-full"
+                      />
+                    ) : (
+                      <span className="text-white">{dev.nome}</span>
+                    )}
+                  </td>
+                  <td className="text-white w-1/12">{dev.sexo}</td>
+                  <td className="text-white w-2/12">
+                    {new Date(dev.data_nascimento).toLocaleDateString()}
+                  </td>
+                  <td className="text-white w-1/12">{dev.idade}</td>
+                  <td className="w-2/12">
+                    {editedDevId === dev.id ? (
+                      <input
+                        type="text"
+                        name="hobby"
+                        value={editedDev.hobby}
+                        onChange={handleChange}
+                        className="px-4 py-2 mb-4 rounded-md shadow-sm bg-gray-700 text-white w-full"
+                      />
+                    ) : (
+                      <span className="text-white">{dev.hobby}</span>
+                    )}
+                  </td>
+                  <td className="text-white w-2/12">{dev.nivel}</td>
+                  <td className="w-1/12">
+                    {editedDevId === dev.id ? (
+                      <button
+                        onClick={handleSave}
+                        className="bg-violet-400 hover:bg-violet-500 text-white px-4 py-2 rounded-md mr-2">
+                        Salvar
+                      </button>
+                    ) : (
+                      <div className="flex">
+                        <button
+                          onClick={() => handleEdit(dev)}
+                          className="bg-violet-400 hover:bg-violet-500 text-white px-4 py-2 rounded-md mr-2">
+                          Editar
+                        </button>
+                        <button
+                          onClick={() => handleDelete(dev.id)}
+                          className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md">
+                          Excluir
+                        </button>
+                      </div>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <div className="flex justify-center w-full">
+            {devList.length > itemsPerPage && (
+              <nav className="flex w-full justify-center">
+                <ul className="pagination flex">
+                  {[...Array(Math.ceil(devList.length / itemsPerPage))].map(
+                    (_, index) => (
+                      <li key={index} className="page-item">
+                        <button
+                          onClick={() => paginate(index + 1)}
+                          className="page-link text-white">
+                          {index + 1}
+                        </button>
+                      </li>
+                    )
+                  )}
+                </ul>
+              </nav>
+            )}
+          </div>
+        </>
       )}
     </div>
   );
