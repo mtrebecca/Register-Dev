@@ -10,6 +10,7 @@ function DesenvolvedoresList({ desenvolvedores, onDelete }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
 
   useEffect(() => {
     setDevList(desenvolvedores);
@@ -116,6 +117,26 @@ function DesenvolvedoresList({ desenvolvedores, onDelete }) {
     }));
   };
 
+  const handleSort = (key) => {
+    let direction = "asc";
+    if (sortConfig.key === key && sortConfig.direction === "asc") {
+      direction = "desc";
+    }
+    setSortConfig({ key, direction });
+
+    const sortedList = [...devList].sort((a, b) => {
+      if (a[key] < b[key]) {
+        return direction === "asc" ? -1 : 1;
+      }
+      if (a[key] > b[key]) {
+        return direction === "asc" ? 1 : -1;
+      }
+      return 0;
+    });
+
+    setDevList(sortedList);
+  };
+
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentDevList = devList.slice(indexOfFirstItem, indexOfLastItem);
@@ -141,15 +162,48 @@ function DesenvolvedoresList({ desenvolvedores, onDelete }) {
           <table className="w-full justify-between">
             <thead>
               <tr>
-                <th className="text-left text-white w-1/12">ID</th>
-                <th className="text-left text-white w-2/12">Nome</th>
-                <th className="text-left text-white w-1/12">Sexo</th>
-                <th className="text-left text-white w-2/12">
+                <th
+                  className="text-left text-white w-1/12 cursor-pointer"
+                  onClick={() => handleSort("id")}
+                >
+                  ID
+                </th>
+                <th
+                  className="text-left text-white w-2/12 cursor-pointer"
+                  onClick={() => handleSort("nome")}
+                >
+                  Nome
+                </th>
+                <th
+                  className="text-left text-white w-1/12 cursor-pointer"
+                  onClick={() => handleSort("sexo")}
+                >
+                  Sexo
+                </th>
+                <th
+                  className="text-left text-white w-2/12 cursor-pointer"
+                  onClick={() => handleSort("data_nascimento")}
+                >
                   Data de Nascimento
                 </th>
-                <th className="text-left text-white w-1/12">Idade</th>
-                <th className="text-left text-white w-2/12">Hobby</th>
-                <th className="text-left text-white w-2/12">Nível</th>
+                <th
+                  className="text-left text-white w-1/12 cursor-pointer"
+                  onClick={() => handleSort("idade")}
+                >
+                  Idade
+                </th>
+                <th
+                  className="text-left text-white w-2/12 cursor-pointer"
+                  onClick={() => handleSort("hobby")}
+                >
+                  Hobby
+                </th>
+                <th
+                  className="text-left text-white w-2/12 cursor-pointer"
+                  onClick={() => handleSort("nivel")}
+                >
+                  Nível
+                </th>
                 <th className="text-left text-white w-1/12">Ações</th>
               </tr>
             </thead>
@@ -157,7 +211,8 @@ function DesenvolvedoresList({ desenvolvedores, onDelete }) {
               {currentDevList.map((dev) => (
                 <tr
                   key={dev.id}
-                  className="items-center justify-between w-full">
+                  className="items-center justify-between w-full"
+                >
                   <td className="text-white w-1/12">{dev.id}</td>
                   <td className="w-2/12">
                     {editedDevId === dev.id ? (
@@ -195,19 +250,22 @@ function DesenvolvedoresList({ desenvolvedores, onDelete }) {
                     {editedDevId === dev.id ? (
                       <button
                         onClick={handleSave}
-                        className="bg-violet-400 hover:bg-violet-500 text-white px-4 py-2 rounded-md mr-2">
+                        className="bg-violet-400 hover:bg-violet-500 text-white px-4 py-2 rounded-md mr-2"
+                      >
                         Salvar
                       </button>
                     ) : (
                       <div className="flex">
                         <button
                           onClick={() => handleEdit(dev)}
-                          className="bg-violet-400 hover:bg-violet-500 text-white px-4 py-2 rounded-md mr-2">
+                          className="bg-violet-400 hover:bg-violet-500 text-white px-4 py-2 rounded-md mr-2"
+                        >
                           Editar
                         </button>
                         <button
                           onClick={() => handleDelete(dev.id)}
-                          className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md">
+                          className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md"
+                        >
                           Excluir
                         </button>
                       </div>
@@ -226,7 +284,8 @@ function DesenvolvedoresList({ desenvolvedores, onDelete }) {
                       <li key={index} className="page-item">
                         <button
                           onClick={() => paginate(index + 1)}
-                          className="page-link text-white">
+                          className="page-link text-white"
+                        >
                           {index + 1}
                         </button>
                       </li>

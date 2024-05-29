@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
-import '../styles/Listas.css';
+import "../styles/Listas.css";
 
 function NiveisList({ niveis, onDelete }) {
   const [niveisList, setNiveisList] = useState([]);
@@ -11,6 +11,7 @@ function NiveisList({ niveis, onDelete }) {
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
 
   useEffect(() => {
     setNiveisList(niveis);
@@ -74,6 +75,46 @@ function NiveisList({ niveis, onDelete }) {
     setEditedNivel(e.target.value);
   };
 
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`http://localhost:3002/api/niveis/${id}`);
+      setNiveisList(niveisList.filter((nivel) => nivel.id !== id));
+      Swal.fire({
+        icon: "success",
+        title: "Nível excluído com sucesso!",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    } catch (error) {
+      setError("Erro ao excluir o nível. Por favor, tente novamente.");
+      Swal.fire({
+        icon: "error",
+        title: "Erro ao excluir o nível",
+        text: "Por favor, tente novamente.",
+      });
+    }
+  };
+
+  const handleSort = (key) => {
+    let direction = 'asc';
+    if (sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+
+    const sortedList = [...niveisList].sort((a, b) => {
+      if (a[key] < b[key]) {
+        return direction === 'asc' ? -1 : 1;
+      }
+      if (a[key] > b[key]) {
+        return direction === 'asc' ? 1 : -1;
+      }
+      return 0;
+    });
+
+    setNiveisList(sortedList);
+  };
+
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = niveisList.slice(indexOfFirstItem, indexOfLastItem);
@@ -96,8 +137,8 @@ function NiveisList({ niveis, onDelete }) {
       <table className="w-full justify-between">
         <thead>
           <tr>
-            <th className="text-left text-white w-1/12">ID</th>
-            <th className="text-left text-white w-4/12">Nível</th>
+            <th className="text-left text-white w-1/12 cursor-pointer" onClick={() => handleSort('id')}>ID</th>
+            <th className="text-left text-white w-4/12 cursor-pointer" onClick={() => handleSort('nivel')}>Nível</th>
             <th className="text-left text-white w-6/12">Ações</th>
           </tr>
         </thead>
@@ -132,7 +173,7 @@ function NiveisList({ niveis, onDelete }) {
                       Editar
                     </button>
                     <button
-                      onClick={() => onDelete(nivel.id)}
+                      onClick={() => handleDelete(nivel.id)}
                       className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md">
                       Excluir
                     </button>
