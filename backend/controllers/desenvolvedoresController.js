@@ -1,5 +1,5 @@
 const axios = require("axios");
-
+import calcularIdade from '../../frontend/src/utils/calcularIdade';
 let desenvolvedores = [
   {
     id: 1,
@@ -20,17 +20,6 @@ let desenvolvedores = [
     nivel_id: 2,
   },
 ];
-
-function calcularIdade(dataNascimento) {
-  const hoje = new Date();
-  const nascimento = new Date(dataNascimento);
-  let idade = hoje.getFullYear() - nascimento.getFullYear();
-  const mes = hoje.getMonth() - nascimento.getMonth();
-  if (mes < 0 || (mes === 0 && hoje.getDate() < nascimento.getDate())) {
-    idade--;
-  }
-  return idade;
-}
 
 exports.desenvolvedores = desenvolvedores;
 
