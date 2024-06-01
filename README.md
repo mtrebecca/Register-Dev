@@ -41,7 +41,7 @@ O arquivo docker-compose.yml configura os serviços do frontend e backend, para 
 
     construir e subir os contêineres:
 
-        **docker-compose up --build
+        * docker-compose up --build *
 
     Acessar a aplicação:
 
