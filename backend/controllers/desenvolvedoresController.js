@@ -1,5 +1,5 @@
 const axios = require("axios");
-import calcularIdade from '../../frontend/src/utils/calcularIdade';
+const calcularIdade = require('../../frontend/src/utils/calcularIdade');
 let desenvolvedores = [
   {
     id: 1,
