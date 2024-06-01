@@ -1,22 +1,28 @@
-const desenvolvedoresController = require('./desenvolvedoresController');
+const axios = require('axios');
 
-exports.listarDesenvolvedoresPorNivel = (req, res) => {
+exports.listarDesenvolvedoresPorNivel = async (req, res) => {
   const nivelId = parseInt(req.params.nivelId);
-  const desenvolvedoresAssociados = desenvolvedoresController.desenvolvedores.filter((dev) => dev.nivel_id === nivelId);
-  res.json(desenvolvedoresAssociados);
+
+  try {
+    const desenvolvedoresResponse = await axios.get('http://localhost:3002/api/desenvolvedoresPorNivel');
+    const desenvolvedores = desenvolvedoresResponse.data;
+
+    const desenvolvedoresAssociados = desenvolvedores.filter((dev) => dev.nivel_id === nivelId);
+    res.json(desenvolvedoresAssociados);
+  } catch (error) {
+    console.error('Erro ao buscar desenvolvedores:', error);
+    res.status(500).json({ error: 'Erro ao buscar desenvolvedores' });
+  }
 };
 
-exports.listarNiveisComQuantidade = (req, res) => {
-    const niveis = desenvolvedoresController.niveis;
-    const desenvolvedores = desenvolvedoresController.desenvolvedores;
-  
-    console.log("Níveis:", niveis);
-    console.log("Desenvolvedores:", desenvolvedores);
-  
-    if (!niveis || !desenvolvedores) {
-      return res.status(500).json({ error: "Dados não carregados corretamente." });
-    }
-  
+exports.listarNiveisComQuantidade = async (req, res) => {
+  try {
+    const niveisResponse = await axios.get('http://localhost:3002/api/niveis');
+    const niveis = niveisResponse.data;
+
+    const desenvolvedoresResponse = await axios.get('http://localhost:3002/api/desenvolvedores');
+    const desenvolvedores = desenvolvedoresResponse.data;
+
     const niveisComQuantidade = niveis.map((nivel) => {
       const quantidade = desenvolvedores.filter((dev) => dev.nivel_id === nivel.id).length;
       return {
@@ -24,7 +30,10 @@ exports.listarNiveisComQuantidade = (req, res) => {
         quantidadeDesenvolvedores: quantidade,
       };
     });
-  
+
     res.json(niveisComQuantidade);
-  };
-  
+  } catch (error) {
+    console.error('Erro ao buscar dados:', error);
+    res.status(500).json({ error: 'Erro ao buscar dados' });
+  }
+};

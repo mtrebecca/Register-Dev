@@ -1,0 +1,23 @@
+version: "3.8"
+services:
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - minha-spa-network
+
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "3002:3002"
+    networks:
+      - minha-spa-network
+
+networks:
+  minha-spa-network:
+    driver: bridge

@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { listarDesenvolvedoresPorNivel, listarNiveisComQuantidade } = require('../controllers/desenvolvedoresNiveisController');
+const desenvolvedoresNiveisController = require('../controllers/desenvolvedoresNiveisController');
 
-router.get('/nivel/:nivelId', listarDesenvolvedoresPorNivel);
-router.get('/niveisComQuantidade', listarNiveisComQuantidade);
+router.get('/nivel/:nivelId', desenvolvedoresNiveisController.listarDesenvolvedoresPorNivel);
+router.get('/niveisComQuantidade', desenvolvedoresNiveisController.listarNiveisComQuantidade);
 
 module.exports = router;

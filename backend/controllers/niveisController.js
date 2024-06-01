@@ -1,3 +1,4 @@
+const axios = require('axios');
 let niveis = [
   { id: 1, nivel: "Júnior" },
   { id: 2, nivel: "Pleno" },
@@ -17,11 +18,22 @@ exports.listarNiveis = (req, res) => {
 
 exports.cadastrarNivel = (req, res) => {
   const { nivel } = req.body;
+
+  if (!nivel || nivel.trim() === '') {
+    return res.status(400).json({ error: 'O campo "nivel" é obrigatório' });
+  }
+
+  const nivelExistente = niveis.find(n => n.nivel.toLowerCase() === nivel.toLowerCase());
+  if (nivelExistente) {
+    return res.status(400).json({ error: 'Este nível já existe' });
+  }
+
   const id = niveis.length + 1;
   const novoNivel = { id, nivel };
   niveis.push(novoNivel);
   res.status(201).json(novoNivel);
 };
+
 
 exports.editarNivel = (req, res) => {
   const id = parseInt(req.params.id);

@@ -1,0 +1,10 @@
+.page-item {
+  border: 1px solid white;
+  border-radius: 5px;
+  padding: 3px 8px;
+  margin: 4px;
+}
+
+.pagination {
+    margin: 10px;
+}
