@@ -13,8 +13,6 @@ Projeto é uma aplicação de página única (SPA) para listagem e cadastro de n
 - **Axios**: Cliente HTTP para fazer requisições à API.
 - **SweetAlert2**: Para mostrar alertas bonitos e responsivos.
 - **TailwindCSS**: Framework CSS para estilização rápida e responsiva.
-- **Formik**: Biblioteca para construção de formulários no React.
-- **Yup**: Biblioteca para validação de formulários.
 
 ### Backend
 
